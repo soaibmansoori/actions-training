@@ -1,6 +1,6 @@
 name: Matrix Lab
 on:
-  workflow_dispatch:
+  workflow_call:
 jobs:
   example_matrix:
     strategy:
