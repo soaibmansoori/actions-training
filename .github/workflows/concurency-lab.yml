@@ -1,0 +1,51 @@
+name: Concurrency Demo
+
+on:
+    workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  upload-tree:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v4
+
+      - name: List files in the repository
+        run: |
+          echo "::group::The repository ${{ github.repository }} contains the following files"
+          tree > tree.txt
+          cat tree.txt
+          echo "::endgroup::"
+
+      - name: Upload tree output
+        uses: actions/upload-artifact@v4
+        with:
+          name: tree-output
+          path: tree.txt
+
+      - name: Simulate work
+        run: sleep 10  
+
+  add-summary:
+    runs-on: ubuntu-latest
+    needs: upload-tree
+    steps:
+      - name: Download tree output
+        uses: actions/download-artifact@v4
+        with:
+          name: tree-output
+
+      - name: Simulate work
+        run: sleep 10
+
+      - name: Add job summary with tree output
+        run: |
+          echo "### Job completed! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo '### Project Directory Tree' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat tree.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
