@@ -3,4 +3,4 @@ on:
   workflow_dispatch:
 jobs:
   consume_workflow:
-    uses: actions-training/.github/workflows/matrix-lab.yml@main
+    uses: soaibmansoori/actions-training/.github/workflows/matrix-lab.yml@main
